@@ -10,17 +10,40 @@ class mainSession extends Component{
     constructor(){
         super();
         this.state = {
-            father: "爸爸给的"
+            filterStatus: "all"
         }
     }
+    changeFilter(val){
+        this.setState({
+            filterStatus: val
+        })
+    }
+    hello(){
+        console.log(1111)
+    }
+    
     render(){
+        let filteredTodos = (function(){
+            if(this.state.filterStatus === "all"){
+                return this.props.reducer
+            }else if(this.state.filterStatus === "done"){
+                return this.props.reducer.filter(item=>{
+                    return item.done === true
+                })
+            }else if(this.state.filterStatus === "notdone"){
+                return this.props.reducer.filter(item=>{
+                    return item.done === false
+                })
+            }
+        }).call(this)
+        
         return <div>
             <ul>
-                {this.props.reducer.map((item,index)=>{
+                {filteredTodos.map((item,index)=>{
                     return <Item key={index} item={item} actions={this.props.actions}>{item.content}</Item>
                 })}
             </ul>
-            <InfoBar/>
+            <InfoBar reducer={this.props.reducer} changeFilter={this.changeFilter.bind(this)}/>
         </div>
     }
 }
